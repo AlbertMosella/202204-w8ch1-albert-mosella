@@ -1,27 +1,34 @@
-import { useEffect, useState } from "react";
-import { StarShip, StarShipList } from "./interfaces/Starship";
+import { useCallback, useEffect, useState } from "react";
+import { StarShip } from "./interfaces/Starship";
 
 function App() {
   const [numberOfStarships, setNumberOfStarships] = useState<number>(0);
   const [starShips, setStarShips] = useState<StarShip[]>([]);
   const [starShipsClass, setStarShipsClass] = useState<string[]>([]);
 
-  const getStarShips = async () => {
-    const response: Response = await fetch("https://swapi.dev/api/starships/");
-    const starShipsList = await response.json();
-    setStarShips(starShipsList);
-    setNumberOfStarships(starShipsList.count);
-    console.log(starShipsList.results);
-    setStarShipsClass(orderStarshipByClass(starShipsList.results));
-  };
+  const getStarShips = useCallback(
+    () => async () => {
+      const response: Response = await fetch(
+        "https://swapi.dev/api/starships/"
+      );
+      const starShipsList = await response.json();
+      setStarShips(starShipsList);
+      setNumberOfStarships(starShipsList.count);
+      console.log(starShips);
+      setStarShipsClass(orderStarshipByClass(starShipsList.results));
+    },
+    [starShips]
+  );
 
   const orderStarshipByClass = (starShips: StarShip[]) => {
     return starShips.map((ship) => ship.starship_class);
   };
 
   useEffect(() => {
-    getStarShips();
-  }, []);
+    (async () => {
+      getStarShips();
+    })();
+  }, [getStarShips]);
 
   return (
     <div id="background-container">
