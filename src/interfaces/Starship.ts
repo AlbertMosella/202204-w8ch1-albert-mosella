@@ -19,7 +19,8 @@ export interface StarShip {
   url: string;
 }
 
-export interface StarShipList {
+/* export interface StarShipList {
   starships: StarShip[];
   count: number;
 }
+ */
